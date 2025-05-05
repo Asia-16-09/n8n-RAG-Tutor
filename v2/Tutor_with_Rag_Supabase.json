@@ -1,0 +1,731 @@
+{
+  "name": "Tutor with Rag Supabase",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -460,
+        -220
+      ],
+      "id": "542c7af7-d106-4ec4-bef6-fe270d7f83ea",
+      "name": "Telegram Trigger",
+      "webhookId": "0def355a-606b-47c1-a8c1-1da6a317112c"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot7531537869:AAFz26MV5SheYsvS6pHjtSuR3T7Dn0jWJMM/sendChatAction?chat_id={{ $json.message.chat.id }}&action=typing",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -40,
+        -400
+      ],
+      "id": "cb7d0370-b09a-4ed8-8d3e-06da3d5fc628",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        -400
+      ],
+      "id": "06744da3-5cbd-4b3f-b1f6-47aec1f7e304",
+      "name": "Wait",
+      "webhookId": "fdb35fea-0df3-4fcc-b608-b7d31141caa1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "114e83b8-bbe7-4832-94a5-b0f83e09b7d6",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d299c99f-d73b-4c9c-8890-81befadc6f0b",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        0,
+        -220
+      ],
+      "id": "77460368-dd88-4ddb-a12d-bc8f04c362d4",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are an AI English tutor who conducts lessons with Telegram students whose proficiency ranges from complete beginner (A1) to advanced (C1). Your goal is to help each learner build confidence and communicative skill in English through personalised explanations, practice, and feedback.\n\n1. Your Tools\nTool\tPurpose\tTypical Usage\nResourceLibrary (vector database in Supabase)\tStores leveled texts, audio clips, grammar notes, vocabulary flash-cards, exam tasks (IELTS, TOEFL, Cambridge) tagged by CEFR level and topic.\tRetrieve material that matches the student’s current level, interests, and lesson focus (e.g., “A2 reading about travel”, “C1 phrasal-verb worksheet”).\nTavily Search\tLive internet search for fresh, authentic content (news, statistics, cultural references) or clarification when ResourceLibrary lacks an item.\tFind a current article about environmental issues for a B2 learner’s debate task; pull the latest Cambridge speaking-test band descriptors. Always cite the source.\nChat Memory (PostgreSQL)\tStores every interaction with each student: CEFR level, goals, past errors, vocabulary lists, completed homework, lesson bookings.\tPersonalise explanations (“You often confuse present perfect and past simple”) and avoid repeating the same examples.\nCalendar\tBooks 25- or 55-minute Telegram/voice/video sessions.\tShow available slots, accept a student’s choice, confirm, reschedule, or cancel.\n\n2. Workflow & Responsibilities\nClarify the Request\nAsk targeted questions to understand the student’s immediate need (grammar point, exam prep, business e-mail, pronunciation) and confirm their CEFR level if uncertain.\n\nSelect or Create Material\n\nUse ResourceLibrary first.\n\nIf suitable material is missing or out-of-date, use Tavily Search and cite the source.\n\nDeliver the Lesson\n\nProvide clear explanations, examples, and short practice tasks.\n\nAdapt vocabulary, sentence length, and instructions to the learner’s level (A1→simple present / C1→mixed conditionals, collocations).\n\nEncourage interaction: ask the learner to respond with voice notes, text, or quizzes.\n\nPersonalised Feedback\n\nAnalyse errors using Chat Memory to spot patterns.\n\nGive corrective feedback, highlighting progress and areas for improvement.\n\nStore new errors and goals back into Chat Memory.\n\nHomework & Self-Study\n\nAssign bite-sized tasks (quiz links, reading, shadowing audio).\n\nLog tasks in Chat Memory so you can review next time.\n\nScheduling\n\nIf follow-up practice is advisable, offer to book a session.\n\nCheck Calendar for open times; present 2-3 options.\n\nAfter the student picks a slot, confirm the booking via Calendar and send a confirmation message.\n\nEncouragement & Meta-Learning\nRemind students that consistent practice and exposure are essential. Encourage questions and reassure them that mistakes are part of learning.\n\n3. Tone & Style Guidelines\nFriendly, supportive, and professional.\n\nUse the student’s name and preferred pronouns.\n\nKeep instructions concise for lower levels; use richer language and nuance for higher levels.\n\nWhenever you introduce new vocabulary, supply a brief definition and (optionally) the translation if the student requests it.\n\nVary exercise types: gap fills, sentence re-ordering, role-play scripts, mini-debates, audio shadowing, dictation.\n\n4. Example Interaction Snippet\nStudent (B1): I always confuse words “do” and “make”.\nAI Tutor:\n\nClarify: “Could you share two sentences where you hesitated?”\n\nRetrieve: From ResourceLibrary → B1 Collocations list: make vs. do.\n\nTeach: Explain rule, give 5 examples, short quiz.\n\nFeedback: Store common mistakes in Chat Memory.\n\nSchedule: “Would you like a 25-minute practice call tomorrow at 18:00 or Thursday at 19:30?”\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        800,
+        -280
+      ],
+      "id": "7c66e81b-d97d-4899-b722-9d2e501637a3",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        -20
+      ],
+      "id": "e067a4b7-7091-475b-b8ef-504ba0da4c99",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Edit Fields').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1200,
+        -280
+      ],
+      "id": "69a8d707-0f93-4df9-8d46-816cc736fbcd",
+      "name": "Telegram1",
+      "webhookId": "e9e28e0a-2a52-4e1f-a75a-3038fc580e57"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -100
+      ],
+      "id": "8676abd6-703e-4d96-a91b-25f2f02e7c2d",
+      "name": "Telegram2",
+      "webhookId": "cdd58a70-0cd9-4f6a-a99f-157fc4726345"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        400,
+        0
+      ],
+      "id": "a7beeba9-f1dc-44b8-938a-427abb23907a",
+      "name": "OpenAI"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fdd20ad3-f39e-4579-9f91-145c7a039181",
+              "name": "text",
+              "value": "={{ $json.text || $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "b84cb516-ef23-469c-957f-2609d7e34dc2",
+              "name": "=sessionId",
+              "value": "={{  'user_'+ $('Switch').item.json.message.from.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        560,
+        -240
+      ],
+      "id": "2392aa1a-7525-4bf5-9eca-59971e021f91",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "name": "calendar",
+        "description": "Use \"Create Event with Attendee\" when an event includes a participant.\n\nUse \"Create Event\" for solo events.\n\nUse \"Get Events\" to fetch calendar schedules when requested.\n\nUse \"Delete Event\" to delete an event. You must use \"Get Events\" first to get the ID of the event to delete.\nUse \"Update Event\" to update an event. You must use \"Get Events\" first to get the ID of the event to update.\n\n",
+        "workflowId": {
+          "__rl": true,
+          "value": "Hbjwf1bVX0wJLu0e",
+          "mode": "list",
+          "cachedResultName": "Calendar"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.1,
+      "position": [
+        1000,
+        -20
+      ],
+      "id": "01102a2b-b03d-4936-8488-7667ea048ecc",
+      "name": "Calendar"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Use this tool to search the internet.",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n    \"api_key\": \"ВАШ АПИ\",\n    \"query\": \"{searchTerm}\",\n    \"search_depth\": \"basic\",\n    \"include_answer\": true,\n    \"topic\": \"news\",\n    \"include_raw_content\": true,\n    \"max_results\": 3\n} ",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "searchTerm",
+              "description": "What the user has requested to search the internet for",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        880,
+        -20
+      ],
+      "id": "a1f2ce6d-0479-4cde-b042-5ab983261ec1",
+      "name": "Tavily"
+    },
+    {
+      "parameters": {
+        "name": "user_documents",
+        "description": "This database stores all the results of tests and examinations. Be sure to use this data to make recommendations for the client's treatment."
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolVectorStore",
+      "typeVersion": 1,
+      "position": [
+        1160,
+        -60
+      ],
+      "id": "488a6041-abfc-4721-b75f-b69fa3c8ed4c",
+      "name": "Answer questions with a vector store"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1400,
+        160
+      ],
+      "id": "4f91a99d-a9ce-4156-b17a-657988413344",
+      "name": "OpenAI Chat Model1"
+    },
+    {
+      "parameters": {
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        1080,
+        100
+      ],
+      "id": "70c0e9af-dc4a-4477-846f-995c6f11b9da",
+      "name": "Supabase Vector Store"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1020,
+        260
+      ],
+      "id": "a9bf60d9-6a4f-47c1-a54a-0df779d48bf0",
+      "name": "Embeddings OpenAI"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryZep",
+      "typeVersion": 1.3,
+      "position": [
+        780,
+        0
+      ],
+      "id": "29098954-844e-46d0-8873-ada307362afb",
+      "name": "Zep"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2000,
+        -400
+      ],
+      "id": "fa33af0c-b8cc-4fac-b108-1f2c1b855b3f",
+      "name": "When clicking ‘Test workflow’"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "1GH98uC7o3eu4GCSxgY-SL5f63KqYpIA5",
+          "mode": "list",
+          "cachedResultName": "_Ghidul Limba Engleza A1, A1.1, A1.2.pdf",
+          "cachedResultUrl": "https://drive.google.com/file/d/1GH98uC7o3eu4GCSxgY-SL5f63KqYpIA5/view?usp=drivesdk"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1780,
+        -380
+      ],
+      "id": "085eb9b6-2bd0-40d5-b9b2-730bb6635463",
+      "name": "Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "j75Y58Xat7pwKkI7",
+          "name": "Google Drive account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -1540,
+        -380
+      ],
+      "id": "fe7f483a-9360-4b12-b37c-d2a797ccd4c7",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        -1100,
+        -200
+      ],
+      "id": "327914f7-06bd-466e-a12a-7778984b9ccd",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        -1000,
+        20
+      ],
+      "id": "9c3270fd-015e-4b28-a507-14fabdb846dd",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1360,
+        -220
+      ],
+      "id": "bdf3f9ea-defb-4492-bf14-e84e4e31d5d2",
+      "name": "Embeddings OpenAI1",
+      "credentials": {
+        "openAiApi": {
+          "id": "87JotkExkKZFqXoi",
+          "name": "OpenAi account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.1,
+      "position": [
+        -1320,
+        -420
+      ],
+      "id": "0713c20b-c62a-4469-a7fc-4d595883dfbf",
+      "name": "Supabase Vector Store1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram2": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer questions with a vector store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_vectorStore": [
+        [
+          {
+            "node": "Answer questions with a vector store",
+            "type": "ai_vectorStore",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zep": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Google Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "964b532d-00eb-4f62-bbcb-fb6d9302fe08",
+  "meta": {
+    "instanceId": "056dc1aea1ad22a0744f974ba610b30f7eb02fa40b9a54cc2cd04cb68301b7dc"
+  },
+  "id": "eU520jbTQOSPwB3u",
+  "tags": []
+}
