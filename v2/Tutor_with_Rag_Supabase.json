@@ -15,13 +15,12 @@
         -220
       ],
       "id": "542c7af7-d106-4ec4-bef6-fe270d7f83ea",
-      "name": "Telegram Trigger",
-      "webhookId": "0def355a-606b-47c1-a8c1-1da6a317112c"
+      "name": "Telegram Trigger"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://api.telegram.org/bot7531537869:AAFz26MV5SheYsvS6pHjtSuR3T7Dn0jWJMM/sendChatAction?chat_id={{ $json.message.chat.id }}&action=typing",
+        "url": "=https://api.telegram.org/bot[YOUR_BOT_TOKEN]/sendChatAction?chat_id={{ $json.message.chat.id }}&action=typing",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -42,8 +41,7 @@
         -400
       ],
       "id": "06744da3-5cbd-4b3f-b1f6-47aec1f7e304",
-      "name": "Wait",
-      "webhookId": "fdb35fea-0df3-4fcc-b608-b7d31141caa1"
+      "name": "Wait"
     },
     {
       "parameters": {
@@ -113,7 +111,7 @@
         "promptType": "define",
         "text": "={{ $json.text }}",
         "options": {
-          "systemMessage": "=You are an AI English tutor who conducts lessons with Telegram students whose proficiency ranges from complete beginner (A1) to advanced (C1). Your goal is to help each learner build confidence and communicative skill in English through personalised explanations, practice, and feedback.\n\n1. Your Tools\nTool\tPurpose\tTypical Usage\nResourceLibrary (vector database in Supabase)\tStores leveled texts, audio clips, grammar notes, vocabulary flash-cards, exam tasks (IELTS, TOEFL, Cambridge) tagged by CEFR level and topic.\tRetrieve material that matches the student’s current level, interests, and lesson focus (e.g., “A2 reading about travel”, “C1 phrasal-verb worksheet”).\nTavily Search\tLive internet search for fresh, authentic content (news, statistics, cultural references) or clarification when ResourceLibrary lacks an item.\tFind a current article about environmental issues for a B2 learner’s debate task; pull the latest Cambridge speaking-test band descriptors. Always cite the source.\nChat Memory (PostgreSQL)\tStores every interaction with each student: CEFR level, goals, past errors, vocabulary lists, completed homework, lesson bookings.\tPersonalise explanations (“You often confuse present perfect and past simple”) and avoid repeating the same examples.\nCalendar\tBooks 25- or 55-minute Telegram/voice/video sessions.\tShow available slots, accept a student’s choice, confirm, reschedule, or cancel.\n\n2. Workflow & Responsibilities\nClarify the Request\nAsk targeted questions to understand the student’s immediate need (grammar point, exam prep, business e-mail, pronunciation) and confirm their CEFR level if uncertain.\n\nSelect or Create Material\n\nUse ResourceLibrary first.\n\nIf suitable material is missing or out-of-date, use Tavily Search and cite the source.\n\nDeliver the Lesson\n\nProvide clear explanations, examples, and short practice tasks.\n\nAdapt vocabulary, sentence length, and instructions to the learner’s level (A1→simple present / C1→mixed conditionals, collocations).\n\nEncourage interaction: ask the learner to respond with voice notes, text, or quizzes.\n\nPersonalised Feedback\n\nAnalyse errors using Chat Memory to spot patterns.\n\nGive corrective feedback, highlighting progress and areas for improvement.\n\nStore new errors and goals back into Chat Memory.\n\nHomework & Self-Study\n\nAssign bite-sized tasks (quiz links, reading, shadowing audio).\n\nLog tasks in Chat Memory so you can review next time.\n\nScheduling\n\nIf follow-up practice is advisable, offer to book a session.\n\nCheck Calendar for open times; present 2-3 options.\n\nAfter the student picks a slot, confirm the booking via Calendar and send a confirmation message.\n\nEncouragement & Meta-Learning\nRemind students that consistent practice and exposure are essential. Encourage questions and reassure them that mistakes are part of learning.\n\n3. Tone & Style Guidelines\nFriendly, supportive, and professional.\n\nUse the student’s name and preferred pronouns.\n\nKeep instructions concise for lower levels; use richer language and nuance for higher levels.\n\nWhenever you introduce new vocabulary, supply a brief definition and (optionally) the translation if the student requests it.\n\nVary exercise types: gap fills, sentence re-ordering, role-play scripts, mini-debates, audio shadowing, dictation.\n\n4. Example Interaction Snippet\nStudent (B1): I always confuse words “do” and “make”.\nAI Tutor:\n\nClarify: “Could you share two sentences where you hesitated?”\n\nRetrieve: From ResourceLibrary → B1 Collocations list: make vs. do.\n\nTeach: Explain rule, give 5 examples, short quiz.\n\nFeedback: Store common mistakes in Chat Memory.\n\nSchedule: “Would you like a 25-minute practice call tomorrow at 18:00 or Thursday at 19:30?”\n\n\n"
+          "systemMessage": "=You are an AI English tutor who conducts lessons with Telegram students whose proficiency ranges from complete beginner (A1) to advanced (C1). Your goal is to help each learner build confidence and communicative skill in English through personalised explanations, practice, and feedback.\n\n1. Your Tools\nTool\tPurpose\tTypical Usage\nResourceLibrary (vector database in Supabase)\tStores leveled texts, audio clips, grammar notes, vocabulary flash-cards, exam tasks (IELTS, TOEFL, Cambridge) tagged by CEFR level and topic.\tRetrieve material that matches the studentâ€™s current level, interests, and lesson focus (e.g., â€œA2 reading about travelâ€, â€œC1 phrasal-verb worksheetâ€).\nTavily Search\tLive internet search for fresh, authentic content (news, statistics, cultural references) or clarification when ResourceLibrary lacks an item.\tFind a current article about environmental issues for a B2 learnerâ€™s debate task; pull the latest Cambridge speaking-test band descriptors. Always cite the source.\nChat Memory (PostgreSQL)\tStores every interaction with each student: CEFR level, goals, past errors, vocabulary lists, completed homework, lesson bookings.\tPersonalise explanations (â€œYou often confuse present perfect and past simpleâ€) and avoid repeating the same examples.\nCalendar\tBooks 25- or 55-minute Telegram/voice/video sessions.\tShow available slots, accept a studentâ€™s choice, confirm, reschedule, or cancel.\n\n2. Workflow & Responsibilities\nClarify the Request\nAsk targeted questions to understand the studentâ€™s immediate need (grammar point, exam prep, business e-mail, pronunciation) and confirm their CEFR level if uncertain.\n\nSelect or Create Material\n\nUse ResourceLibrary first.\n\nIf suitable material is missing or out-of-date, use Tavily Search and cite the source.\n\nDeliver the Lesson\n\nProvide clear explanations, examples, and short practice tasks.\n\nAdapt vocabulary, sentence length, and instructions to the learnerâ€™s level (A1â†'simple present / C1â†'mixed conditionals, collocations).\n\nEncourage interaction: ask the learner to respond with voice notes, text, or quizzes.\n\nPersonalised Feedback\n\nAnalyse errors using Chat Memory to spot patterns.\n\nGive corrective feedback, highlighting progress and areas for improvement.\n\nStore new errors and goals back into Chat Memory.\n\nHomework & Self-Study\n\nAssign bite-sized tasks (quiz links, reading, shadowing audio).\n\nLog tasks in Chat Memory so you can review next time.\n\nScheduling\n\nIf follow-up practice is advisable, offer to book a session.\n\nCheck Calendar for open times; present 2-3 options.\n\nAfter the student picks a slot, confirm the booking via Calendar and send a confirmation message.\n\nEncouragement & Meta-Learning\nRemind students that consistent practice and exposure are essential. Encourage questions and reassure them that mistakes are part of learning.\n\n3. Tone & Style Guidelines\nFriendly, supportive, and professional.\n\nUse the studentâ€™s name and preferred pronouns.\n\nKeep instructions concise for lower levels; use richer language and nuance for higher levels.\n\nWhenever you introduce new vocabulary, supply a brief definition and (optionally) the translation if the student requests it.\n\nVary exercise types: gap fills, sentence re-ordering, role-play scripts, mini-debates, audio shadowing, dictation.\n\n4. Example Interaction Snippet\nStudent (B1): I always confuse words â€œdoâ€ and â€œmakeâ€.\nAI Tutor:\n\nClarify: â€œCould you share two sentences where you hesitated?â€\n\nRetrieve: From ResourceLibrary â†' B1 Collocations list: make vs. do.\n\nTeach: Explain rule, give 5 examples, short quiz.\n\nFeedback: Store common mistakes in Chat Memory.\n\nSchedule: â€œWould you like a 25-minute practice call tomorrow at 18:00 or Thursday at 19:30?â€\n\n\n"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -158,8 +156,7 @@
         -280
       ],
       "id": "69a8d707-0f93-4df9-8d46-816cc736fbcd",
-      "name": "Telegram1",
-      "webhookId": "e9e28e0a-2a52-4e1f-a75a-3038fc580e57"
+      "name": "Telegram1"
     },
     {
       "parameters": {
@@ -173,8 +170,7 @@
         -100
       ],
       "id": "8676abd6-703e-4d96-a91b-25f2f02e7c2d",
-      "name": "Telegram2",
-      "webhookId": "cdd58a70-0cd9-4f6a-a99f-157fc4726345"
+      "name": "Telegram2"
     },
     {
       "parameters": {
@@ -227,9 +223,9 @@
         "description": "Use \"Create Event with Attendee\" when an event includes a participant.\n\nUse \"Create Event\" for solo events.\n\nUse \"Get Events\" to fetch calendar schedules when requested.\n\nUse \"Delete Event\" to delete an event. You must use \"Get Events\" first to get the ID of the event to delete.\nUse \"Update Event\" to update an event. You must use \"Get Events\" first to get the ID of the event to update.\n\n",
         "workflowId": {
           "__rl": true,
-          "value": "Hbjwf1bVX0wJLu0e",
+          "value": "CONFIGURE_CALENDAR_WORKFLOW_ID",
           "mode": "list",
-          "cachedResultName": "Calendar"
+          "cachedResultName": "Calendar Management Workflow"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -256,7 +252,7 @@
         "url": "https://api.tavily.com/search",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "{\n    \"api_key\": \"ВАШ АПИ\",\n    \"query\": \"{searchTerm}\",\n    \"search_depth\": \"basic\",\n    \"include_answer\": true,\n    \"topic\": \"news\",\n    \"include_raw_content\": true,\n    \"max_results\": 3\n} ",
+        "jsonBody": "{\n    \"api_key\": \"YOUR_TAVILY_API_KEY\",\n    \"query\": \"{searchTerm}\",\n    \"search_depth\": \"basic\",\n    \"include_answer\": true,\n    \"topic\": \"news\",\n    \"include_raw_content\": true,\n    \"max_results\": 3\n}",
         "placeholderDefinitions": {
           "values": [
             {
@@ -362,17 +358,17 @@
         -400
       ],
       "id": "fa33af0c-b8cc-4fac-b108-1f2c1b855b3f",
-      "name": "When clicking ‘Test workflow’"
+      "name": "When clicking 'Test workflow'"
     },
     {
       "parameters": {
         "operation": "download",
         "fileId": {
           "__rl": true,
-          "value": "1GH98uC7o3eu4GCSxgY-SL5f63KqYpIA5",
+          "value": "YOUR_GOOGLE_DRIVE_FILE_ID",
           "mode": "list",
-          "cachedResultName": "_Ghidul Limba Engleza A1, A1.1, A1.2.pdf",
-          "cachedResultUrl": "https://drive.google.com/file/d/1GH98uC7o3eu4GCSxgY-SL5f63KqYpIA5/view?usp=drivesdk"
+          "cachedResultName": "Your Educational Material",
+          "cachedResultUrl": "Configure Google Drive file URL"
         },
         "options": {}
       },
@@ -386,8 +382,8 @@
       "name": "Google Drive",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "j75Y58Xat7pwKkI7",
-          "name": "Google Drive account 2"
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Configure googleDrive credential"
         }
       }
     },
@@ -447,8 +443,8 @@
       "name": "Embeddings OpenAI1",
       "credentials": {
         "openAiApi": {
-          "id": "87JotkExkKZFqXoi",
-          "name": "OpenAi account 2"
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Configure openAi credential"
         }
       }
     },
@@ -458,7 +454,7 @@
         "tableName": {
           "__rl": true,
           "mode": "list",
-          "value": ""
+          "value": "documents"
         },
         "options": {}
       },
@@ -634,98 +630,7 @@
         [
           {
             "node": "Supabase Vector Store",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Zep": {
-      "ai_memory": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Test workflow’": {
-      "main": [
-        [
-          {
-            "node": "Google Drive",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Drive": {
-      "main": [
-        [
-          {
-            "node": "Extract from File",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Extract from File": {
-      "main": [
-        [
-          {
-            "node": "Supabase Vector Store1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Default Data Loader": {
-      "ai_document": [
-        [
-          {
-            "node": "Supabase Vector Store1",
-            "type": "ai_document",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Recursive Character Text Splitter": {
-      "ai_textSplitter": [
-        [
-          {
-            "node": "Default Data Loader",
-            "type": "ai_textSplitter",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Embeddings OpenAI1": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Supabase Vector Store1",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    }
-  },
-  "active": false,
-  "settings": {
-    "executionOrder": "v1"
-  },
-  "versionId": "964b532d-00eb-4f62-bbcb-fb6d9302fe08",
-  "meta": {
-    "instanceId": "056dc1aea1ad22a0744f974ba610b30f7eb02fa40b9a54cc2cd04cb68301b7dc"
-  },
+            "type": "ai_
   "id": "eU520jbTQOSPwB3u",
   "tags": []
 }
